@@ -1,0 +1,229 @@
+{
+ "version": 2,
+ "config": {
+  "sample_questions": [
+   {
+    "id": "2417722c9ec54f8bac2c9bf011eed5ca",
+    "question": [
+     "How much revenue is at risk over the next 3 days by region?"
+    ]
+   },
+   {
+    "id": "470e1326ede6728b7a715eab75ffa6a9",
+    "question": [
+     "What is the out-of-stock rate on promo vs non-promo days by category?"
+    ]
+   },
+   {
+    "id": "8ac91cfc0185004d4c9b1f6fd1b5148d",
+    "question": [
+     "How many replenishment orders did store managers approve, and how many units?"
+    ]
+   },
+   {
+    "id": "8dd0e98db577ed3ae3ecd361919acfa3",
+    "question": [
+     "Which 10 stores lost the most sales to stockouts in October 2026?"
+    ]
+   },
+   {
+    "id": "b28af886e51155ad3fd2d00f11545911",
+    "question": [
+     "Show high-risk items in the Northeast with more than $200 revenue at risk"
+    ]
+   }
+  ]
+ },
+ "data_sources": {
+  "tables": [
+   {
+    "identifier": "sabir_freshmart.gold.store_daily_kpis"
+   },
+   {
+    "identifier": "sabir_freshmart.gold.store_sku_daily"
+   },
+   {
+    "identifier": "sabir_freshmart.ml.stockout_risk_scores",
+    "column_configs": [
+     {
+      "column_name": "category",
+      "enable_entity_matching": true,
+      "enable_format_assistance": true
+     },
+     {
+      "column_name": "region",
+      "enable_entity_matching": true,
+      "enable_format_assistance": true
+     },
+     {
+      "column_name": "revenue_at_risk_usd",
+      "synonyms": [
+       "sales at risk",
+       "revenue at risk"
+      ]
+     },
+     {
+      "column_name": "risk_tier",
+      "enable_entity_matching": true,
+      "enable_format_assistance": true
+     },
+     {
+      "column_name": "sku_name",
+      "enable_entity_matching": true,
+      "synonyms": [
+       "item",
+       "product"
+      ]
+     },
+     {
+      "column_name": "stockout_prob_3d",
+      "description": [
+       "Probability (0-1) of running out within 3 days"
+      ],
+      "synonyms": [
+       "stockout risk",
+       "OOS risk"
+      ]
+     },
+     {
+      "column_name": "store_name",
+      "enable_entity_matching": true,
+      "synonyms": [
+       "store",
+       "location"
+      ]
+     }
+    ]
+   },
+   {
+    "identifier": "sabir_freshmart.serving.stockout_alerts"
+   },
+   {
+    "identifier": "sabir_freshmart.serving.store_briefings"
+   },
+   {
+    "identifier": "sabir_freshmart_lakebase.app.replenishment_actions"
+   }
+  ],
+  "metric_views": [
+   {
+    "identifier": "sabir_freshmart.gold.stockout_metrics"
+   }
+  ]
+ },
+ "instructions": {
+  "text_instructions": [
+   {
+    "id": "1cb251ec0d568de6a929b520c4aed8d1",
+    "content": [
+     "FreshMart is an 80-store regional grocery chain (synthetic data). Users are merchandising analysts, supply-chain planners and store managers.",
+     "KPIs: use the metric view sabir_freshmart.gold.stockout_metrics with MEASURE() for Net Sales, Estimated Lost Sales, Out Of Stock Rate, On Shelf Availability (OSA), Promo Out Of Stock Rate, Lost Sales Pct. Always group by the metric view's dimensions with GROUP BY ALL.",
+     "Out of stock (OOS) = a store-SKU-day that ended with zero units on hand (is_oos). Lost sales are ESTIMATED from the in-stock run rate and are conservative.",
+     "Forward-looking risk (next 3 days) lives in sabir_freshmart.ml.stockout_risk_scores: stockout_prob_3d (0-1), risk_tier (HIGH >= 0.5, MEDIUM 0.2-0.5, LOW), revenue_at_risk_usd, recommended_action (EXPEDITE_OR_TRANSFER, EXPEDITE_AND_ORDER, APPROVE_ORDER, MONITOR, NONE), recommended_order_units (extra units to order now), stockout_prob_order_window (risk in days lead_time..lead_time+2, when today's order would land) and stockout_prob_if_approved (same window after approving), revenue_at_risk_7d_usd, revenue_protected_if_approved_usd, inbound_3d_units, risk_drivers. It has one row per store-SKU for the latest as_of_date.",
+     "AI-written explanations are in sabir_freshmart.serving.stockout_alerts.ai_reason; per-store morning briefings are in sabir_freshmart.serving.store_briefings.briefing.",
+     "Manager actions taken in the Shelf Guard app (approve / override / dismiss, with order_units) are in sabir_freshmart_lakebase.app.replenishment_actions (live Lakebase Postgres table). Join to stockout alerts on alert_id.",
+     "'Last month' means the latest complete calendar month in the data; the data ends on the max business_date in gold.store_sku_daily, not today's date. Prefer relative filters anchored on max(business_date).",
+     "Format money as USD with no decimals, rates as percentages with one decimal."
+    ]
+   }
+  ],
+  "example_question_sqls": [
+   {
+    "id": "06b5645e24d1fd78cecfb7e37af9963a",
+    "question": [
+     "How many replenishment orders did store managers approve, and how many units?"
+    ],
+    "sql": [
+     "SELECT action, count(*) AS actions, sum(order_units) AS units, round(sum(revenue_at_risk_usd), 0) AS revenue_protected_usd FROM sabir_freshmart_lakebase.app.replenishment_actions GROUP BY action ORDER BY actions DESC"
+    ]
+   },
+   {
+    "id": "1ed0b4ba6ca9bef5e53d5df736623e4d",
+    "question": [
+     "What is the out-of-stock rate on promo vs non-promo days by category?"
+    ],
+    "sql": [
+     "SELECT `Category`, `On Promo`, MEASURE(`Out Of Stock Rate`) AS oos_rate FROM sabir_freshmart.gold.stockout_metrics GROUP BY ALL ORDER BY `Category`, `On Promo`"
+    ]
+   },
+   {
+    "id": "b1a3eb58390def354a51970ccb648b92",
+    "question": [
+     "Which 10 stores lost the most sales to stockouts in October 2026?"
+    ],
+    "sql": [
+     "SELECT `Store`, `Region`, MEASURE(`Estimated Lost Sales`) AS est_lost_sales, MEASURE(`On Shelf Availability`) AS osa FROM sabir_freshmart.gold.stockout_metrics WHERE `Month` = DATE'2026-10-01' GROUP BY ALL ORDER BY est_lost_sales DESC LIMIT 10"
+    ]
+   },
+   {
+    "id": "f2102e2bacc420f260352a21372aa2f0",
+    "question": [
+     "How much revenue is at risk over the next 3 days by region?"
+    ],
+    "sql": [
+     "SELECT region, count_if(risk_tier = 'HIGH') AS high_risk_items, round(sum(revenue_at_risk_usd), 0) AS revenue_at_risk_usd FROM sabir_freshmart.ml.stockout_risk_scores GROUP BY region ORDER BY revenue_at_risk_usd DESC"
+    ]
+   }
+  ]
+ },
+ "benchmarks": {
+  "questions": [
+   {
+    "id": "1cae8d0e0d25276af79ce3743fc43eb7",
+    "question": [
+     "Which category has the highest promo out-of-stock rate?"
+    ],
+    "answer": [
+     {
+      "format": "SQL",
+      "content": [
+       "SELECT `Category`, MEASURE(`Promo Out Of Stock Rate`) AS promo_oos FROM sabir_freshmart.gold.stockout_metrics GROUP BY ALL ORDER BY promo_oos DESC LIMIT 1"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "47b7d4c8c3b32f4a2cd7a9619921bc4b",
+    "question": [
+     "How many store-SKUs are high risk right now?"
+    ],
+    "answer": [
+     {
+      "format": "SQL",
+      "content": [
+       "SELECT count(*) AS high_risk FROM sabir_freshmart.ml.stockout_risk_scores WHERE risk_tier = 'HIGH'"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "57cad3dfedbb7af9fe0050fd00618601",
+    "question": [
+     "Total estimated lost sales by region for the last 12 months"
+    ],
+    "answer": [
+     {
+      "format": "SQL",
+      "content": [
+       "SELECT `Region`, MEASURE(`Estimated Lost Sales`) AS lost FROM sabir_freshmart.gold.stockout_metrics GROUP BY ALL ORDER BY lost DESC"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "f0875a0b4107c0d1108e0211ed55642d",
+    "question": [
+     "What was the chain-wide on-shelf availability in October 2026?"
+    ],
+    "answer": [
+     {
+      "format": "SQL",
+      "content": [
+       "SELECT MEASURE(`On Shelf Availability`) AS osa FROM sabir_freshmart.gold.stockout_metrics WHERE `Month` = DATE'2026-10-01'"
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

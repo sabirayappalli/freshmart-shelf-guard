@@ -1,0 +1,276 @@
+<!doctype html><html><head><meta charset='utf-8'><style>
+@page { size: 13.333in 7.5in; margin: 0; }
+* { box-sizing: border-box; }
+body { margin: 0; font: 15px/1.45 -apple-system, "Helvetica Neue", Arial, sans-serif; color: #0b0b0b; }
+.slide { width: 13.333in; height: 7.5in; padding: 0.55in 0.75in; page-break-after: always; overflow: hidden; position: relative;
+         border-top: 10px solid #1b3139; }
+.slide:first-child { background: #1b3139; color: #fcfcfb; display: flex; flex-direction: column; justify-content: center; border-top: none; }
+.slide:first-child h1 { font-size: 46px; color: #fff; } .slide:first-child h3 { color: #ff6f4c; font-size: 24px; }
+.slide:first-child p, .slide:first-child em { color: #c3c2b7; }
+h1 { font-size: 34px; margin: 0 0 8px; letter-spacing: -0.01em; } h2 { font-size: 27px; margin: 0 0 14px; color: #1b3139; }
+h3 { font-size: 19px; margin: 6px 0; }
+table { border-collapse: collapse; width: 100%; margin: 8px 0 10px; font-size: 13.5px; }
+th { text-align: left; background: #f4f4f2; border-bottom: 2px solid #1b3139; padding: 6px 8px; }
+td { border-bottom: 1px solid #e3e2de; padding: 5px 8px; vertical-align: top; }
+blockquote { margin: 8px 0; padding: 8px 14px; border-left: 5px solid #ff3621; background: #fff4f1; font-size: 15px; }
+blockquote p { margin: 4px 0; }
+code { font-size: 12px; background: #f4f4f2; padding: 1px 4px; border-radius: 3px; }
+pre { font-size: 11.5px; line-height: 1.35; background: #f4f4f2; padding: 10px 14px; border-radius: 6px; overflow: hidden; }
+pre code { background: none; padding: 0; }
+ul, ol { margin: 6px 0 6px 22px; padding: 0; } li { margin: 3px 0; }
+strong { color: #1b3139; } .slide:first-child strong { color: #fff; }
+.num { position: absolute; bottom: 0.25in; right: 0.5in; font-size: 11px; color: #8a8984; }
+</style></head><body><section class="slide"><h1>FreshMart Shelf Guard</h1>
+<h3>Stop losing sales to empty shelves: fix it before the truck leaves the DC</h3>
+<p><em>Prepared for: COO / VP Supply Chain (executive sponsor) · Director of Store Replenishment (domain owner)</em></p>
+<p><em>All figures from a working prototype on synthetic data modelled on grocery benchmarks. No customer data.</em></p><div class="num">FreshMart Shelf Guard · 1/11</div></section><section class="slide"><h2>1 · The outcome, up front</h2>
+<blockquote>
+<p><strong>Recover ~$5.5M a year in lost sales on the 200 items that matter most, and take promo stockouts from 13% to under 2%, for about $240K of extra inventory.</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Today</th>
+<th>With Shelf Guard</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>On-shelf availability</td>
+<td>95.6%</td>
+<td><strong>99.2%</strong></td>
+</tr>
+<tr>
+<td>Promo out-of-stock rate</td>
+<td>12.9%</td>
+<td><strong>1.6%</strong></td>
+</tr>
+<tr>
+<td>Sales lost to empty shelves</td>
+<td>2.0% of demand</td>
+<td><strong>0.35%</strong></td>
+</tr>
+<tr>
+<td>Gross margin, after extra shrink</td>
+<td>—</td>
+<td><strong>+$1.34M / yr</strong></td>
+</tr>
+</tbody>
+</table>
+<p><em>Measured by replaying the last 6 weeks, held out from training, on identical customer demand. Only the ordering decision changes.</em></p><div class="num">FreshMart Shelf Guard · 2/11</div></section><section class="slide"><h2>2 · The problem in the buyer's KPIs</h2>
+<ul>
+<li><strong>$9.4M a year walks out the door</strong> on 200 high-velocity items across 80 stores: <strong>2.7% of potential sales</strong>.</li>
+<li><strong>Promotions are where it hurts: 14.8%</strong> of promoted store-SKU-days end with an empty shelf, against 4.4% on other days. FreshMart pays for the circular, the customer comes in, and the shelf is empty.</li>
+<li><strong>Root cause:</strong> replenishment orders off a trailing 28-day average. It <strong>under-forecasts promo demand by 25%</strong> and can't see holidays, so it under-orders exactly when demand spikes.</li>
+<li><strong>Store managers find out from the empty shelf.</strong> Today's reports show yesterday's stockouts, when it's too late to act.</li>
+</ul>
+<p><em>Note: POS can only see sales, not the customers who found an empty shelf. Our gold-layer estimate of lost sales ($4.6M) is about half the true figure ($9.4M), so the problem is at least as big as the reports say.</em></p><div class="num">FreshMart Shelf Guard · 3/11</div></section><section class="slide"><h2>3 · What changes for the store manager (the domain owner's view)</h2>
+<p><strong>Every morning at 7am</strong>, each manager opens Shelf Guard and sees:</p>
+<ol>
+<li><strong>A three-bullet briefing</strong> written by AI from that store's own numbers: what's at risk, which orders to approve before the 10am DC cutoff.</li>
+<li><strong>A ranked list of items that will run out</strong> if they rely on the current system, sorted by <strong>revenue at risk</strong> rather than alphabetically, each with <strong>one recommended action</strong>:<ul>
+<li><strong>Approve order</strong> (1,491 items today): the suggested extra units cut the stockout risk in the window the order lands in from <strong>21% to 2%</strong>.</li>
+<li><strong>Expedite / transfer</strong> (992 items today): the shelf empties before any new order can land, so call the DC or the nearest store.</li>
+<li>Each item shows on hand, deliveries due, the probability before and after, and one line of <em>why</em>.</li>
+</ul>
+</li>
+<li><strong>One click: Approve / Edit / Dismiss.</strong> The decision is saved instantly (Lakebase) and visible to HQ and to Genie.</li>
+</ol>
+<blockquote>
+<p><strong>Morning briefing, FreshMart Salt Lake City #1065 (verbatim AI output):</strong></p>
+<ul>
+<li><strong>$1,233 at risk over 3 days</strong> (14 high, 13 medium). Approve expedites before the 10am DC cutoff.</li>
+<li><strong>Northstar Coffee Classic:</strong> 0 on hand, 155 units demand, 25% promo. Expedite or transfer now, since stock empties before a standard order lands.</li>
+<li><strong>Blue Ridge Cookies Organic</strong> (3 on hand, 69 units, promo) and <strong>Northstar Baking Lite</strong> (0 on hand, 65 units): approve expedites or transfers today.</li>
+</ul>
+<p><strong>Item alert, FreshMart Raleigh #1040 · Sunny Day Paper Towels, recommended action APPROVE ORDER:</strong>
+<em>"Forecast demand of 30.0 units (1.18x normal, 25% off promo) exceeds 24 on hand; approve the 30-unit order to cut days 6-7 stockout risk from 43.0% to 2.0%."</em></p>
+</blockquote>
+<p>For items where a new order can't arrive in time (long-lead dry goods), the alert says so: <strong>"expedite or transfer from a nearby store"</strong>, not "order more".</p><div class="num">FreshMart Shelf Guard · 4/11</div></section><section class="slide"><h2>4 · What changes for the executive sponsor</h2>
+<table>
+<thead>
+<tr>
+<th>Sponsor KPI</th>
+<th>Impact</th>
+<th>How we know</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Comparable-store sales</strong></td>
+<td>+1.7% on the modelled assortment</td>
+<td>Backtest net sales $37.85M → $38.49M in 6 weeks</td>
+</tr>
+<tr>
+<td><strong>Gross margin $</strong></td>
+<td><strong>+$1.34M / yr</strong> after the extra shrink</td>
+<td>Margin computed after shrink, at cost</td>
+</tr>
+<tr>
+<td><strong>Promo ROI</strong></td>
+<td>Promo stockouts 12.9% → 1.6%, so funded promotions actually sell</td>
+<td>Backtest promo OOS</td>
+</tr>
+<tr>
+<td><strong>Working capital</strong></td>
+<td>+$236K average inventory (+14%), the price of availability</td>
+<td>Shown openly, not hidden</td>
+</tr>
+<tr>
+<td><strong>Customer trust / NPS</strong></td>
+<td>Shelf availability 95.6% → 99.2%</td>
+<td>OSA in the governed metric view</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The trade-off we're choosing:</strong> about $240K more stock on the shelf, carefully targeted, in exchange for $5.5M more sales.
+Shrink rises 3.6% (the cost of holding more perishables) and is already netted out of the margin figure.</p><div class="num">FreshMart Shelf Guard · 5/11</div></section><section class="slide"><h2>5 · Value: three numbers, three levels of confidence</h2>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Scope</th>
+<th>Annual sales recovered</th>
+<th>Annual gross margin</th>
+<th>Basis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Measured</strong></td>
+<td>80 stores × 200 SKUs</td>
+<td><strong>$5.5M</strong></td>
+<td><strong>$1.34M</strong></td>
+<td>6-week hold-out replay, same demand</td>
+</tr>
+<tr>
+<td><strong>Plan</strong> <em>(what we'd commit to)</em></td>
+<td>same</td>
+<td><strong>$2.8M</strong></td>
+<td><strong>$0.67M</strong></td>
+<td>Measured × 50% for execution reality (manager adoption, data latency, supplier fill)</td>
+</tr>
+<tr>
+<td><strong>Chain potential</strong></td>
+<td>Fresh + promoted assortment, about 45% of a ~$2.1B chain</td>
+<td><strong>~$11M</strong></td>
+<td><strong>~$2.6M</strong></td>
+<td>Same lost-sales rate (2.7%), half the modelled recovery (41%)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Run cost:</strong> one nightly serverless pipeline + model + batch AI. The <strong>whole build to date cost $7.47 at list price</strong> (<code>system.billing</code>, failed attempts included), so a nightly production run is <strong>under ~$5, about $1.5K a year</strong>.
+<strong>Payback:</strong> under one quarter on the <em>plan</em> case.</p><div class="num">FreshMart Shelf Guard · 6/11</div></section><section class="slide"><h2>6 · How it works (one platform, one copy of the data)</h2>
+<pre><code> POS · WMS (on hand + open POs) · DC receipts · promo calendar · store/item master
+   │  Lakeflow (Auto Loader, expectations)            ← nightly, incremental, data-quality gated
+   ▼
+ Unity Catalog: bronze → silver → gold   + metric view (OSA, OOS, lost sales)   ← one definition of every KPI
+   │                                       row filter by region · cost column masked
+   ▼
+ ML: demand forecast per store × SKU (MLflow, @prod gate) → 3-day stockout simulation → suggested order
+   ▼
+ GenAI: one-line reason per at-risk item + morning briefing per store (ai_query, grounded on facts)
+   ▼
+ Lakebase (Postgres): alerts served in milliseconds · manager approvals written back
+   ▼
+ Shelf Guard app (store view · chain impact) + Genie Agent (&quot;which stores lost the most sales on promos last month?&quot;)
+</code></pre><div class="num">FreshMart Shelf Guard · 7/11</div></section><section class="slide"><h2>7 · Why trust the numbers</h2>
+<ul>
+<li><strong>The model is graded on what causes stockouts.</strong> Forecast bias on promo days goes from −25% to ~0%. Accuracy (WAPE) improves 0.43 → 0.40; daily demand is mostly noise, so that's the expected size.</li>
+<li><strong>The risk score is calibrated, and we checked.</strong> Scored as of Oct 29 and compared with what actually happened Oct 30 – Nov 1: AUC <strong>0.81</strong>, <strong>75%</strong> of items flagged HIGH actually ran out, and the predicted rates line up with actuals in every band (e.g. predicted 62% → actual 67%; predicted 93% → actual 94%). Our first version of this score failed the same check (AUC 0.52) and was rebuilt. We show that too.</li>
+<li><strong>The value test isolates the decision.</strong> Same customers, same demand, same starting shelves. Only the order rule changes. The ML policy is even fed the old (biased) history, so the result is conservative.</li>
+<li><strong>The AI can't make things up.</strong> It sees only the row's numbers, and the numbers sit next to the sentence for audit.</li>
+<li><strong>Governed end to end.</strong> Lineage from raw file to the app, regional row-level security, a cost-price mask, and one KPI definition shared by Genie and the app.</li>
+</ul><div class="num">FreshMart Shelf Guard · 8/11</div></section><section class="slide"><h2>8 · Proposed next step: a 6-week, 10-store pilot</h2>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Activity</th>
+<th>Success metric</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0–1</td>
+<td>Connect real POS/WMS feeds (Lakeflow Connect / file drops); backfill 12 months</td>
+<td>Data-quality pass rate &gt; 99.5%</td>
+</tr>
+<tr>
+<td>1–2</td>
+<td>Retrain on FreshMart history; calibrate risk by region</td>
+<td>Risk AUC &gt; 0.75 on hold-out</td>
+</tr>
+<tr>
+<td>2–6</td>
+<td>10 pilot stores use Shelf Guard daily; 10 matched control stores</td>
+<td><strong>OSA +2 pts, promo OOS −50%</strong> vs control</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Readout to COO: go / no-go for chain rollout</td>
+<td>Measured margin ≥ plan case</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ask:</strong> a named replenishment lead, POS/WMS feed access, and 10 pilot store managers.</p><div class="num">FreshMart Shelf Guard · 9/11</div></section><section class="slide"><h2>9 · Demo script (tell → show → tell, 7 minutes)</h2>
+<ol>
+<li><strong>Tell (30s):</strong> "$9.4M of sales lost on 200 items, and promos are 3x worse. Today managers find out from the empty shelf."</li>
+<li><strong>Show, store view (2 min):</strong> Salt Lake City #1065 → AI morning briefing → top alert <em>Northstar Coffee, 0 on hand, promo, expedite</em> → an <em>Approve order</em> item (risk 43% → 2%) → <strong>Approve</strong> → "saved to Lakebase" (6 ms server-side).</li>
+<li><strong>Show, chain impact (1.5 min):</strong> backtest chart, legacy vs ML lost sales per day → scorecard including the inventory and shrink <em>costs</em>.</li>
+<li><strong>Show, Ask Genie (1.5 min):</strong> "Which 10 stores lost the most sales to stockouts in October?" → SQL shown → "How many orders did managers approve today?" (it reads the live Lakebase table).</li>
+<li><strong>Show, governance (1 min):</strong> lineage raw → app; the same query as HQ returns all 16,000 rows, and as a user with no region mapping returns 0, with unit cost masked.</li>
+<li><strong>Tell (30s):</strong> "$1.3M margin measured, $0.67M we'd commit to, payback inside a quarter. Let's prove it in 10 stores."</li>
+</ol><div class="num">FreshMart Shelf Guard · 10/11</div></section><section class="slide"><h2>10 · Objections we expect, and the answers</h2>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>Objection</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>COO</strong></td>
+<td>"Isn't this just more inventory?"</td>
+<td>Inventory rises 14% but sales rise 1.7% and margin $1.3M <em>after</em> shrink. It's targeted: stock goes to promo and high-velocity items, not the whole store. The scorecard shows both sides.</td>
+</tr>
+<tr>
+<td><strong>COO</strong></td>
+<td>"It's synthetic. Why believe $5.5M?"</td>
+<td>Don't. Commit to the $2.8M plan case and prove it with a 10-store, 6-week controlled pilot. The simulator is tuned to grocery benchmarks (5% OOS, 2.7% lost sales, 15% promo OOS).</td>
+</tr>
+<tr>
+<td><strong>Replenishment director</strong></td>
+<td>"My buyers won't trust a black box."</td>
+<td>Every alert shows its drivers (promo %, holiday, demand vs normal, days of cover, inbound) and a plain-English reason. Managers can override, and overrides are logged to retrain on.</td>
+</tr>
+<tr>
+<td><strong>Replenishment director</strong></td>
+<td>"Will this replace our replenishment system?"</td>
+<td>No. It sits on top: the system keeps ordering, Shelf Guard flags where it will fail and suggests the extra units. Phase 2 can feed suggested orders back into the system's order file.</td>
+</tr>
+<tr>
+<td><strong>CIO / data lead</strong></td>
+<td>"Another tool, another copy of the data?"</td>
+<td>One platform: ingestion, governance, ML, AI, the database and the app all run on the same Unity Catalog tables. The Postgres layer is a synced view of governed data, not a new source of truth.</td>
+</tr>
+<tr>
+<td><strong>CIO / data lead</strong></td>
+<td>"What about access control: can store A see store B?"</td>
+<td>A row filter on region and a column mask on supplier cost, enforced in SQL, Genie and notebooks alike. The app runs as a least-privilege service principal; per-user scoping uses on-behalf-of-user auth.</td>
+</tr>
+<tr>
+<td><strong>CFO</strong></td>
+<td>"What does it cost to run?"</td>
+<td>Under ~$5 per nightly run at list price (about $1.5K a year), measured from <code>system.billing</code>. That's well under 1% of the plan-case margin. Lakebase scales to zero overnight.</td>
+</tr>
+<tr>
+<td><strong>Data scientist</strong></td>
+<td>"WAPE only improved 7%?"</td>
+<td>Store-SKU-day demand is mostly noise (the floor is ~0.35). The win is removing the −25% promo bias and producing calibrated probabilities (AUC 0.81, 75% HIGH precision). The backtest prices it in dollars.</td>
+</tr>
+</tbody>
+</table><div class="num">FreshMart Shelf Guard · 11/11</div></section></body></html>

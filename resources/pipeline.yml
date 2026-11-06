@@ -1,0 +1,15 @@
+resources:
+  pipelines:
+    freshmart_lakeflow:
+      name: freshmart_lakeflow_bronze_silver_gold
+      catalog: ${var.catalog}
+      schema: bronze
+      serverless: true
+      photon: true
+      channel: CURRENT
+      configuration:
+        landing_path: /Volumes/${var.catalog}/raw/landing
+        catalog: ${var.catalog}
+      libraries:
+        - glob:
+            include: ../src/pipeline/**

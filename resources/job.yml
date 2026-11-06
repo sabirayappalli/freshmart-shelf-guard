@@ -1,0 +1,58 @@
+resources:
+  jobs:
+    freshmart_e2e:
+      name: freshmart_stockout_e2e
+      description: "FreshMart stockout prevention: land raw -> Lakeflow bronze/silver/gold -> ML forecast + risk -> GenAI alert reasons -> governance -> publish to Lakebase"
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+      tasks:
+        - task_key: land_raw_history
+          notebook_task:
+            notebook_path: ../src/notebooks/00_setup_and_generate_raw.py
+        - task_key: lakeflow_history
+          depends_on: [{task_key: land_raw_history}]
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.freshmart_lakeflow.id}
+            full_refresh: true   # history files are regenerated each demo run; incremental task below proves Auto Loader increments
+        - task_key: land_live_day
+          depends_on: [{task_key: lakeflow_history}]
+          notebook_task:
+            notebook_path: ../src/notebooks/01_land_live_day.py
+        - task_key: lakeflow_incremental
+          depends_on: [{task_key: land_live_day}]
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.freshmart_lakeflow.id}
+        - task_key: train_demand_forecast
+          depends_on: [{task_key: lakeflow_incremental}]
+          notebook_task:
+            notebook_path: ../src/notebooks/02_train_demand_forecast.py
+        - task_key: score_stockout_risk
+          depends_on: [{task_key: train_demand_forecast}]
+          notebook_task:
+            notebook_path: ../src/notebooks/03_score_stockout_risk.py
+        - task_key: backtest_policy_value
+          depends_on: [{task_key: train_demand_forecast}]
+          notebook_task:
+            notebook_path: ../src/notebooks/04_backtest_policy_value.py
+        - task_key: genai_alerts_and_publish
+          depends_on: [{task_key: score_stockout_risk}]
+          notebook_task:
+            notebook_path: ../src/notebooks/05_genai_alerts_and_publish.py
+            base_parameters:
+              llm_endpoint: ${var.llm_endpoint}
+        - task_key: governance_and_semantics
+          depends_on: [{task_key: genai_alerts_and_publish}, {task_key: backtest_policy_value}]
+          notebook_task:
+            notebook_path: ../src/notebooks/06_governance_and_semantics.py
+            base_parameters:
+              app_sp: ${var.app_sp}
+        # Push the refreshed serving tables into Lakebase (synced tables, TRIGGERED mode; created by setup/lakebase_setup.sh)
+        - task_key: lakebase_sync_alerts
+          depends_on: [{task_key: genai_alerts_and_publish}]
+          pipeline_task:
+            pipeline_id: ${var.lakebase_sync_alerts_pipeline}
+        - task_key: lakebase_sync_briefings
+          depends_on: [{task_key: genai_alerts_and_publish}]
+          pipeline_task:
+            pipeline_id: ${var.lakebase_sync_briefings_pipeline}
